@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum orderStatus {
+  Pending
+  Approved
+  Rejected
+  Completed
+  Shared
+}
+
+enum availabilityType {
+  Free
+  Exchange
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  email     String   @unique
+  password  String
+  avatar    String?
+  books     Book[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  incomingOrders Orders[] @relation("RequestOwner")
+  outgoingOrders Orders[] @relation("RequestRequester")
+}
+
+model Book {
+  id               Int              @id @default(autoincrement())
+  title            String
+  author           String
+  genre            String
+  ageGroup         String
+  coverImage       String
+  availabilityType availabilityType
+  status           String
+  ownerId          Int
+  owner            User             @relation(fields: [ownerId], references: [id])
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  requestedIn Orders[] @relation("RequestedBook")
+  offeredIn   Orders[] @relation("OfferedBook")
+}
+
+model Orders {
+  id     Int  @id @default(autoincrement())
+  bookId Int
+  book   Book @relation("RequestedBook", fields: [bookId], references: [id])
+
+  requesterId Int
+  requester   User @relation("RequestRequester", fields: [requesterId], references: [id])
+
+  ownerId Int
+  owner   User @relation("RequestOwner", fields: [ownerId], references: [id])
+
+  offeredBookId Int?
+  offeredBook   Book? @relation("OfferedBook", fields: [offeredBookId], references: [id])
+
+  orderStatus orderStatus
+  orderDate   DateTime    @default(now())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
