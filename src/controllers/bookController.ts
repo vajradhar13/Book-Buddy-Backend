@@ -1,25 +1,28 @@
 import express, { Request, Response } from "express";
 import prisma from "../utils/prisma";
 import { createBookSchema, updateBookSchema } from "../common/bookValidator";
-export const createBook = async (req: Request, res: Response) => {
+import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+
+export const createBook = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const parsed = createBookSchema.safeParse(req.body);
 
     if (!parsed.success) {
       return res.status(400).json({ error: parsed.error.issues });
     }
-    // if (!req.user || !req.user.id) {
-    //   return res.status(401).json({ error: "Unauthorized. User info missing." });
-    // }
-
-    // // Add ownerId from logged-in user
-    // const bookData = {
-    //   ...parsed.data,
-    //   ownerId: req.user.id,
-    // }; edi add cheyali
+    console.log(req.user.userId);
+    if (!req.user || !req.user.userId) {
+      return res
+        .status(401)
+        .json({ error: "Unauthorized. User info missing." });
+    }
+    const bookData = {
+      ...parsed.data,
+      ownerId: req.user?.userId,
+    };
 
     const newBook = await prisma.book.create({
-      data: parsed.data,
+      data: bookData,
     });
 
     return res.status(201).json(newBook);
@@ -87,7 +90,7 @@ export const getAllBooksFiltered = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-// ===== 📘 Get Book by ID ===== //
+
 export const getBookById = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
@@ -110,7 +113,6 @@ export const getBookById = async (req: Request, res: Response) => {
   }
 };
 
-// ===== ✏️ Update Book ===== //
 export const updateBook = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
@@ -151,7 +153,7 @@ export const deleteBook = async (req: Request, res: Response) => {
       where: { id },
     });
 
-    res.status(204).send();
+    res.status(200).send("Deleted Successfully");
   } catch (err: any) {
     if (err.code === "P2025") {
       return res.status(404).json({ error: "Book not found" });

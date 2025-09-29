@@ -30,7 +30,7 @@ const signup = async (req, res) => {
                 avatar,
             },
         });
-        const token = jsonwebtoken_1.default.sign({ userId: user.id }, JWT_SECRET, {
+        const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
             expiresIn: JWT_EXPIRES_IN,
         });
         res.cookie("token", token, {
@@ -43,7 +43,8 @@ const signup = async (req, res) => {
         res.status(201).json({ user: safeUser });
     }
     catch (error) {
-        res.status(500).json({ error: "Server error" });
+        console.log(error);
+        res.status(500).json({ error });
     }
 };
 exports.signup = signup;

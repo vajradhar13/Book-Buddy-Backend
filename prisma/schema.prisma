@@ -35,9 +35,6 @@ model User {
   books     Book[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  incomingOrders Orders[] @relation("RequestOwner")
-  outgoingOrders Orders[] @relation("RequestRequester")
 }
 
 model Book {
@@ -53,27 +50,16 @@ model Book {
   owner            User             @relation(fields: [ownerId], references: [id])
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
-
-  requestedIn Orders[] @relation("RequestedBook")
-  offeredIn   Orders[] @relation("OfferedBook")
 }
 
 model Orders {
-  id     Int  @id @default(autoincrement())
-  bookId Int
-  book   Book @relation("RequestedBook", fields: [bookId], references: [id])
-
-  requesterId Int
-  requester   User @relation("RequestRequester", fields: [requesterId], references: [id])
-
-  ownerId Int
-  owner   User @relation("RequestOwner", fields: [ownerId], references: [id])
-
+  id            Int              @id @default(autoincrement())
+  requesterId   Int
+  ownerId       Int
+  requestBookId Int
+  type          availabilityType
   offeredBookId Int?
-  offeredBook   Book? @relation("OfferedBook", fields: [offeredBookId], references: [id])
-
-  orderStatus orderStatus
-  orderDate   DateTime    @default(now())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  orderStatus   orderStatus
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 }

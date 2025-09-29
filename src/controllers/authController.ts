@@ -33,7 +33,7 @@ export const signup = async (req: Request, res: Response) => {
       },
     });
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id ,email:user.email}, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
 
@@ -47,7 +47,9 @@ export const signup = async (req: Request, res: Response) => {
     const { password: _, ...safeUser } = user;
     res.status(201).json({ user: safeUser });
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    console.log(error);
+
+    res.status(500).json({ error });
   }
 };
 export const signin = async (req: Request, res: Response) => {

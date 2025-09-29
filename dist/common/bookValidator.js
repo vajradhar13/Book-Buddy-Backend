@@ -23,5 +23,11 @@ exports.createBookSchema = exports.bookSchema.omit({
     id: true,
     createdAt: true,
     updatedAt: true,
+    ownerId: true
 });
-exports.updateBookSchema = exports.bookSchema.partial();
+exports.updateBookSchema = exports.bookSchema.omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    ownerId: true
+}).partial();

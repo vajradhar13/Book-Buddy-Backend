@@ -27,6 +27,7 @@ export const createBookSchema = bookSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+  ownerId:true
 });
 
 export const updateBookSchema = bookSchema.omit({

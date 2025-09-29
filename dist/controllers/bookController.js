@@ -12,8 +12,18 @@ const createBook = async (req, res) => {
         if (!parsed.success) {
             return res.status(400).json({ error: parsed.error.issues });
         }
+        console.log(req.user.userId);
+        if (!req.user || !req.user.userId) {
+            return res
+                .status(401)
+                .json({ error: "Unauthorized. User info missing." });
+        }
+        const bookData = {
+            ...parsed.data,
+            ownerId: req.user?.userId,
+        };
         const newBook = await prisma_1.default.book.create({
-            data: parsed.data,
+            data: bookData,
         });
         return res.status(201).json(newBook);
     }
@@ -77,7 +87,6 @@ const getAllBooksFiltered = async (req, res) => {
     }
 };
 exports.getAllBooksFiltered = getAllBooksFiltered;
-// ===== 📘 Get Book by ID ===== //
 const getBookById = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
@@ -97,7 +106,6 @@ const getBookById = async (req, res) => {
     }
 };
 exports.getBookById = getBookById;
-// ===== ✏️ Update Book ===== //
 const updateBook = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
@@ -131,7 +139,7 @@ const deleteBook = async (req, res) => {
         await prisma_1.default.book.delete({
             where: { id },
         });
-        res.status(204).send();
+        res.status(200).send("Deleted Successfully");
     }
     catch (err) {
         if (err.code === "P2025") {

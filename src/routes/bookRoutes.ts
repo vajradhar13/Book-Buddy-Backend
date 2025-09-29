@@ -7,19 +7,14 @@ import {
   getBookById,
   updateBook,
 } from "../controllers/bookController";
-import { authMiddleware } from '../middlewares/authMiddleware';
+import { authMiddleware } from "../middlewares/authMiddleware";
 const router = express.Router();
-// Test route
-// router.get("/health", (req: Request, res: Response) => {
-//   res.send("Book routes working fine!!");
-// });
-router.get("/all", authMiddleware, getAllBooks); // supports filters & pagination
-router.get("/", authMiddleware, getAllBooksFiltered); // supports filters & pagination
-router.post("/create", authMiddleware, createBook);
+
+router.get("/all", authMiddleware, getAllBooks);
+router.get("/", authMiddleware, getAllBooksFiltered);
+router.post("/create", authMiddleware, createBook as any);
 router.get("/:id", authMiddleware, getBookById);
 router.put("/:id", authMiddleware, updateBook);
 router.delete("/:id", authMiddleware, deleteBook);
 
-// User-specific books
-// router.get("/user/:userId", getUserBooks);
 export default router;

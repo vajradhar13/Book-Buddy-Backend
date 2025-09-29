@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.availabilityTypeEnum = exports.bookStatusEnum = exports.orderStatusEnum = void 0;
 const zod_1 = require("zod");
-// Enum values matching your real dataset (PascalCase)
+// Enum values matching Prisma schema (PascalCase)
 exports.orderStatusEnum = zod_1.z.enum([
     "Pending",
     "Approved",

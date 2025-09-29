@@ -1,5 +1,6 @@
-import { z } from "zod";
+// import { z } from "zod";
 import { orderStatusEnum, availabilityTypeEnum } from "./enums";
+import z from "zod";
 
 export const orderSchema = z.object({
   id: z.number().int().positive().optional(),
@@ -12,7 +13,8 @@ export const orderSchema = z.object({
   requesterId: z
     .number()
     .int()
-    .positive({ message: "Requester ID must be a positive integer" }),
+    .positive({ message: "Requester ID must be a positive integer" })
+    .optional(),
 
   ownerId: z
     .number()
@@ -23,7 +25,7 @@ export const orderSchema = z.object({
 
   offeredBookId: z.number().int().positive().nullable().optional(),
 
-  orderStatus: orderStatusEnum,
+  orderStatus: orderStatusEnum.optional(),
 
   orderDate: z.string().optional(),
   createdAt: z.string().optional(),
